@@ -5,11 +5,11 @@ import { MinimaxAPIClient, MinimaxAPIError, MinimaxRequestError } from './types.
 import { processImageUrl } from './utils.js'
 
 const MINIMAX_API_KEY = process.env['MINIMAX_API_KEY']
-const MINIMAX_HOST = process.env['MINIMAX_HOST']
+const MINIMAX_API_HOST = process.env['MINIMAX_API_HOST']
 
 const createClient = () => {
   let miniMaxApiKey
-  let miniMaxHost
+  let miniMaxApiHost
 
   const context = ctx.safeGet()
   if (context.success) {
@@ -18,20 +18,23 @@ const createClient = () => {
       headers['minimax_api_key']?.toString().trim() ||
       headers['minimax-api-key']?.toString().trim() ||
       MINIMAX_API_KEY
-    miniMaxHost =
-      headers['minimax_host']?.toString().trim() ||
-      headers['minimax-host']?.toString().trim() ||
-      MINIMAX_HOST
+    miniMaxApiHost =
+      headers['minimax_api_host']?.toString().trim() ||
+      headers['minimax-api-host']?.toString().trim() ||
+      MINIMAX_API_HOST
   } else {
     miniMaxApiKey = MINIMAX_API_KEY
-    miniMaxHost = MINIMAX_HOST
+    miniMaxApiHost = MINIMAX_API_HOST
   }
 
   if (!miniMaxApiKey) {
     throw new MinimaxAPIError('MINIMAX_API_KEY env or header cannot be empty')
   }
 
-  const apiClient = new MinimaxAPIClient(miniMaxApiKey, miniMaxHost || 'https://api.minimaxi.com')
+  const apiClient = new MinimaxAPIClient(
+    miniMaxApiKey,
+    miniMaxApiHost || 'https://api.minimaxi.com',
+  )
   return apiClient
 }
 
