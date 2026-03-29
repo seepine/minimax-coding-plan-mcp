@@ -1,0 +1,33 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@6
+        with:
+          node-version: '24'
+
+      - uses: pnpm/action-setup@v5
+        name: Install pnpm
+        with:
+          version: 10
+          cache: true
+
+      - name: Check Formet
+        run: pnpm format
+
+      - name: Check Build
+        run: pnpm build

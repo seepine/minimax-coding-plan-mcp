@@ -1,50 +1,60 @@
 # Mcp Server Template
 
-## Dev
+## 开发
 
-### 1. Install dependencies
+### 1. 安装
 
 ```bash
 pnpm install
 ```
 
-### 2. Start sse server
+### 2. 启动
 
 ```bash
 pnpm dev
 ```
 
-### 3. Start mcp inspector
+### 3. 调试
 
-```bash
-pnpm debug
-```
+在弹出的 MCP Inspector 跳时网页，选择 SSE 模式并连接，SSE 支持自动重连，更好支持本地开发调试，当然你也可以选择其他模式
 
-### 4. Test
+### 4. 参数传递
 
-test your mcp server in chrome of inspector
+- stdio 模式，可以用 `process.env` 获取 mcp 配置的 env 变量
+- see/streamable-http 模式，可以用封装的 ctx.get() 获取 mcp 配置的请求头，方便鉴权等
 
-## Deploy stdio
+## 部署 Stdio
 
-### 1. Build
+### 1. 打包
 
 ```bash
 pnpm build
 ```
 
-### 2. Deploy to npm
+### 2. 发布到 npm
 
 ```bash
 pnpm publish
 ```
 
-### 3. Run the server
+### 3. MCP 配置
 
-```bash
-npx {mcp-server-template}
+```json
+{
+  "mcpServers": {
+    "mcp-server-template": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["mcp-server-template"],
+      "env": {
+        "API_KEY": "sk-123"
+      }
+    }
+  }
+}
 ```
 
-## Deploy docker
+## 部署 docker
 
 ### 1. Build
 
@@ -56,9 +66,30 @@ docker build -t mcp-server-template .
 
 ```bash
 docker run -p 3000:3000 mcp-server-template
+# 或启动 sse
+docker run -p 4000:4000 mcp-server-template node sse.js
 ```
 
-### 3. Connect to the server
+### 3. MCP 配置
 
-- type: streamableHttp
-- url: http://localhost:3000/mcp
+```json
+{
+  "mcpServers": {
+    "mcp-server-template": {
+      "type": "streamableHttp",
+      "url": "http://localhost:3000/mcp",
+      "headers": {
+        "API_KEY": "sk-123"
+      }
+    },
+    // 或 sse
+    "mcp-server-template": {
+      "type": "sse",
+      "url": "http://localhost:4000/mcp",
+      "headers": {
+        "API_KEY": "sk-123"
+      }
+    }
+  }
+}
+```

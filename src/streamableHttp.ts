@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js'
 import { createServer } from './server/index.js'
 import crypto from 'crypto'
+import { ctx } from './server/context.js'
 
 /**
  * 生成sessionId，实际可以根据API-KEY或者token来生成
@@ -79,19 +80,26 @@ const useTransport = async (req: Request, res: Response) => {
 }
 
 app.post('/mcp', async (req: Request, res: Response) => {
-  try {
-    const transport = await useTransport(req, res)
-    await transport.handleRequest(req, res, req.body)
-  } catch (error) {
-    console.error('Error handling MCP request:', error)
-    if (!res.headersSent) {
-      res.status(500).json({
-        jsonrpc: '2.0',
-        error: { code: -32603, message: 'Internal server error' },
-        id: null,
-      })
-    }
-  }
+  ctx.run(
+    {
+      headers: req.headers,
+    },
+    async () => {
+      try {
+        const transport = await useTransport(req, res)
+        await transport.handleRequest(req, res, req.body)
+      } catch (error) {
+        console.error('Error handling MCP request:', error)
+        if (!res.headersSent) {
+          res.status(500).json({
+            jsonrpc: '2.0',
+            error: { code: -32603, message: 'Internal server error' },
+            id: null,
+          })
+        }
+      }
+    },
+  )
 })
 
 const methodNotAllowed = async (req: Request, res: Response) => {

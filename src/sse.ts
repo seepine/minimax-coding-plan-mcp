@@ -1,6 +1,7 @@
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js'
 import express, { Request, Response } from 'express'
 import { createServer } from './server/index.js'
+import { ctx } from './server/context.js'
 
 /**
  * Creates and starts an Express server that provides SSE transport for the MCP Fetch server
@@ -9,7 +10,7 @@ import { createServer } from './server/index.js'
  * @returns A cleanup function to close the server
  */
 export function startSSEServer(
-  port: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
+  port: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000,
   uriPrefix: string = '',
 ): () => Promise<void> {
   const app = express()
@@ -22,7 +23,7 @@ export function startSSEServer(
     : ''
 
   // Define the endpoint paths with the prefix
-  const ssePath = `${normalizedPrefix}/sse`
+  const ssePath = `${normalizedPrefix}/mcp`
   const messagePath = `${normalizedPrefix}/message`
   const infoPath = `${normalizedPrefix}/info`
 
@@ -33,10 +34,17 @@ export function startSSEServer(
     await server.connect(transport)
   })
 
-  // Endpoint for receiving messages from the client
+  // Endpoint for receiving messages from the c lient
   app.post(messagePath, async (req: Request, res: Response) => {
     console.info('Received SSE message')
-    await transport.handlePostMessage(req, res)
+    ctx.run(
+      {
+        headers: req.headers,
+      },
+      async function () {
+        await transport.handlePostMessage(req, res)
+      },
+    )
   })
 
   // Basic info endpoint

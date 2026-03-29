@@ -1,5 +1,5 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
-import { z } from 'zod'
+import { registerTools } from './tools/index.js'
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -7,35 +7,8 @@ export function createServer(): McpServer {
     version: '0.1.0',
   })
 
-  server.registerTool(
-    'get_weather',
-    {
-      description: 'Get weather info for a given city.',
-      inputSchema: {
-        city: z.string().describe('city name'),
-      },
-    },
-    async ({ city }) => {
-      if (!city) {
-        throw new Error('city name is required.')
-      }
-
-      const weather = {
-        city: city,
-        temperature: Math.floor(Math.random() * 30),
-        condition: 'Sunny',
-      }
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(weather, null, 2),
-          },
-        ],
-      }
-    },
-  )
+  // 注册工具
+  registerTools(server)
 
   return server
 }
