@@ -1,93 +1,53 @@
-# Mcp Server Template
+# minimax-coding-plan-mcp
 
-## 开发
+> https://platform.minimaxi.com/docs/token-plan/mcp-guide
 
-### 1. 安装
+MiniMax 模型不支持图片理解，官方提供了 python 版（需安装uvx）的图片理解和网络搜索的 MCP，本项目为官方 MCP 的 Node 版本，使用方法与官方一致
 
-```bash
-pnpm install
-```
+## Stdio MCP 配置
 
-### 2. 启动
-
-```bash
-pnpm dev
-```
-
-### 3. 调试
-
-在弹出的 MCP Inspector 跳时网页，选择 SSE 模式并连接，SSE 支持自动重连，更好支持本地开发调试，当然你也可以选择其他模式
-
-### 4. 参数传递
-
-- stdio 模式，可以用 `process.env` 获取 mcp 配置的 env 变量
-- see/streamable-http 模式，可以用封装的 ctx.get() 获取 mcp 配置的请求头，方便鉴权等
-
-## 部署 Stdio
-
-### 1. 打包
-
-```bash
-pnpm build
-```
-
-### 2. 发布到 npm
-
-```bash
-pnpm publish
-```
-
-### 3. MCP 配置
+将官方的 `uvx` command 改成 `npx` 或 `bunx` 即可
 
 ```json
 {
   "mcpServers": {
-    "mcp-server-template": {
-      "type": "stdio",
+    "minimax-coding-plan-mcp": {
       "command": "npx",
-      "args": ["mcp-server-template"],
+      "args": ["minimax-coding-plan-mcp", "-y"],
       "env": {
-        "API_KEY": "sk-123"
+        "MINIMAX_API_KEY": "sk-123_替换成你的TokenPlan API Key",
+        "MINIMAX_API_HOST": "https://api.minimaxi.com"
       }
     }
   }
 }
 ```
 
-## 部署 docker
+## SSE/HTTP 支持
 
-### 1. Build
+例如你的客户端没有 node 和 uv 环境，也可自行部署服务端，通过 SSE/HTTP 方式连接
 
-```bash
-docker build -t mcp-server-template .
+### 部署服务端
+
+```yml
+services:
+  minimax-coding-plan-mcp:
+    image: seepine/minimax-coding-plan-mcp:latest
+    ports:
+      - 3000:3000
 ```
 
-### 2. Run the server
-
-```bash
-docker run -p 3000:3000 mcp-server-template
-# 或启动 sse
-docker run -p 4000:4000 mcp-server-template node sse.js
-```
-
-### 3. MCP 配置
+### MCP 配置
 
 ```json
 {
   "mcpServers": {
-    "mcp-server-template": {
-      "type": "streamableHttp",
+    "minimax-coding-plan-mcp": {
+      "transport": "http",
       "url": "http://localhost:3000/mcp",
       "headers": {
-        "API_KEY": "sk-123"
-      }
-    },
-    // 或 sse
-    "mcp-server-template": {
-      "type": "sse",
-      "url": "http://localhost:4000/mcp",
-      "headers": {
-        "API_KEY": "sk-123"
+        "MINIMAX_API_KEY": "sk-123_替换成你的TokenPlan API Key",
+        "MINIMAX_API_HOST": "https://api.minimaxi.com"
       }
     }
   }

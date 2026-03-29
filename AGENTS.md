@@ -1,4 +1,4 @@
-# mcp-server-template
+# minimax-coding-plan-mcp
 
 ## 说明
 

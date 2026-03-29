@@ -1,9 +1,9 @@
 {
-  "name": "mcp-server-template",
+  "name": "minimax-coding-plan-mcp",
   "version": "0.1.0",
-  "author": "",
+  "author": "seepine",
   "license": "MIT",
-  "description": "Mcp Server Template",
+  "description": "Mcp Server For MiniMax of web_search and understand_image",
   "type": "module",
   "main": "dist/stdio.js",
   "scripts": {
@@ -33,13 +33,17 @@
     "typescript": "~5.8.2"
   },
   "bin": {
-    "mcp-server-template": "dist/stdio.js"
+    "minimax-coding-plan-mcp": "dist/stdio.js"
   },
   "files": [
     "dist"
   ],
   "keywords": [
-    "mcp"
+    "mcp",
+    "minimax",
+    "image",
+    "web",
+    "search"
   ],
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -47,7 +51,7 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/seepine/minimax-coding-plan-mcp"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
