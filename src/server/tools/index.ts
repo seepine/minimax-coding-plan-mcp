@@ -112,7 +112,7 @@ Args:
 
       const apiClient = createClient()
 
-      const processedImageUrl = await processImageUrl(image_source)
+      const processedImageUrl = await processImageUrl(image_source.trim())
       const payload = {
         prompt,
         image_url: processedImageUrl,
